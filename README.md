@@ -251,7 +251,7 @@ mcp-remote (npx)
 
 ## Data
 
-All data is included in this repository and mounted read-only into the container:
+All data is included in this repository and baked into the Docker image at build time — no volume mounts needed:
 
 | Directory | Size | Contents |
 |-----------|------|----------|

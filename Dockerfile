@@ -15,6 +15,11 @@ from llama_index.embeddings.huggingface import HuggingFaceEmbedding; \
 HuggingFaceEmbedding(model_name='BAAI/bge-small-en-v1.5'); \
 import nltk; nltk.download('punkt_tab', download_dir='/usr/local/lib/python3.11/site-packages/llama_index/core/_static/nltk_cache')"
 
+# Bake data into image so no volume mounts are needed
+COPY KGs /data/KGs
+COPY ramayana_512_index /data/ramayana_512_index
+COPY chunks /data/chunks
+
 ENV RAMAYAN_DATA_DIR=/data
 
 EXPOSE 8000

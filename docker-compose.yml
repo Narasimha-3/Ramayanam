@@ -1,0 +1,12 @@
+services:
+  ramayana:
+    build: .
+    ports:
+      - "8090:8000"
+    volumes:
+      - ./KGs:/data/KGs:ro
+      - ./ramayana_512_index:/data/ramayana_512_index:ro
+      - ./chunks:/data/chunks:ro
+    environment:
+      - RAMAYAN_DATA_DIR=/data
+    restart: unless-stopped

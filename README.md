@@ -103,7 +103,9 @@ Open the Claude Desktop configuration file for your operating system:
 </tr>
 </table>
 
-Add the following to the `mcpServers` section. If the file already has other MCP servers configured, merge this entry into the existing `mcpServers` object:
+Add the following to the `mcpServers` section. If the file already has other MCP servers configured, merge this entry into the existing `mcpServers` object.
+
+#### macOS / Linux
 
 ```json
 {
@@ -116,13 +118,30 @@ Add the following to the `mcpServers` section. If the file already has other MCP
 }
 ```
 
-> **Note:** On macOS and Linux, if `npx` is not on the default shell PATH (common with version managers like `nvm`), use the full path instead:
+> **Note:** If `npx` is not on the default shell PATH (common with version managers like `nvm`), use the full path instead:
 >
 > ```json
 > "command": "/full/path/to/npx"
 > ```
 >
 > Find it by running `which npx` in your terminal.
+
+#### Windows
+
+On Windows, Claude Desktop cannot invoke `npx` directly — it must be called through `cmd.exe`. Additionally, use `127.0.0.1` instead of `localhost` to avoid IPv6 resolution issues with Docker Desktop.
+
+```json
+{
+  "mcpServers": {
+    "valmiki-ramayanam": {
+      "command": "C:\\WINDOWS\\System32\\cmd.exe",
+      "args": ["/C", "C:\\Program Files\\nodejs\\npx.cmd", "-y", "mcp-remote", "http://127.0.0.1:8090/mcp"]
+    }
+  }
+}
+```
+
+> **Note:** If Node.js is installed in a different location, adjust the path to `npx.cmd` accordingly. Find it by running `where npx` in Command Prompt.
 
 ### 4. Restart Claude Desktop
 
@@ -274,11 +293,16 @@ docker compose up -d --build
 
 **`npx` not found by Claude Desktop**
 - Claude Desktop spawns processes without your shell profile, so `nvm`-managed Node.js may not be on PATH
-- Use the full path to `npx` in the config (run `which npx` to find it)
+- **macOS/Linux:** Use the full path to `npx` in the config (run `which npx` to find it)
+- **Windows:** `npx` must be called through `cmd.exe` — see the Windows config example above
+
+**Connection fails with `ECONNREFUSED` or `SocketError: other side closed` (Windows)**
+- Make sure Docker Desktop is running and the container is up: `docker compose ps`
+- Use `http://127.0.0.1:8090/mcp` instead of `http://localhost:8090/mcp` — on Windows, `localhost` often resolves to `::1` (IPv6) while Docker Desktop listens on IPv4 only
 
 **Port conflict on 8090**
 - Change the host port in `docker-compose.yml`: `"9090:8000"`
-- Update the Claude Desktop config URL accordingly: `http://localhost:9090/mcp`
+- Update the Claude Desktop config URL accordingly: `http://127.0.0.1:9090/mcp`
 
 ---
 
